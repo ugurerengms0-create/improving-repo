@@ -1,3 +1,6 @@
+from datetime import datetime
+
+
 menu =  {
     "Tost": 60.0,
     "Sandviç": 50.0,
@@ -12,6 +15,34 @@ def display_menu():
     for item, price in menu.items():
         print(f"{item}: {price} TL")
     print("-" * 40)
+
+def fisi_yazdir(order, total, cut_price=None):
+    zaman = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    with open("siparis_fisi.txt", "w", encoding="utf-8") as f:
+        f.write("========================================\n")
+        f.write("    İZMİR DEMOKRASİ ÜNİVERSİTESİ KANTİNİ\n")
+        f.write(f"    Tarih/Saat: {zaman}\n")
+        f.write("========================================\n\n")
+        f.write("--- SİPARİŞ DETAYLARI ---\n")
+        
+        for item, quantity in order.items():
+            birim_fiyat = menu[item]
+            urun_toplam = birim_fiyat * quantity
+            f.write(f"{item} x {quantity} Adet = {urun_toplam:.2f} TL\n")
+            
+        f.write("----------------------------------------\n")
+        f.write(f"Ara Toplam: {total:.2f} TL\n")
+        
+        if cut_price:
+            f.write(f"İndirimli Ödenecek Tutar: {cut_price:.2f} TL\n")
+        else:
+            f.write(f"Ödenecek Tutar: {total:.2f} TL\n")
+            
+        f.write("\nBizi tercih ettiğiniz için teşekkür ederiz!\n")
+        f.write("========================================\n")
+        
+    print("\n📄 Sipariş fişiniz 'siparis_fisi.txt' dosyasına başarıyla kaydedildi!")
 
 def calculate_total(order):
     total = 0
@@ -31,19 +62,21 @@ def calculate_total(order):
         cut_price = total * 0.85 #%15 indirim
         print("🎉 200 TL ve üzeri alışverişe %15 İndirim Uygulandı!")
         print(f"İndirimli Toplam: {cut_price:.2f} TL")
+        fisi_yazdir(order, total, cut_price)
     elif total >= 100.0:
         cut_price = total * 0.90 #%10 indirim
         print("🎉 100 TL ve üzeri alışverişe %10 İndirim Uygulandı!")
         print(f"İndirimli Toplam: {cut_price:.2f} TL")
+        fisi_yazdir(order, total, cut_price)
     else:
         print(f"Ödenecek Toplam: {total:.2f} TL (İndirim için en az 100 TL alışveriş yapmalısınız.)")
+        fisi_yazdir(order, total, cut_price)
     return total
 def main():
     order = {}
     while True:
         display_menu()
-        item = input("Sipariş etmek istediğiniz ürünü girin (Çıkmak için 'q' tuşuna basın): ").title()
-        
+        item = input("Sipariş etmek istediğiniz ürünü girin (Çıkmak için 'q' tuşuna basın): ").strip().capitalize()
         if item.lower() == 'q':
             print("Siparişiniz tamamlandı. Teşekkür ederiz!")
             break
