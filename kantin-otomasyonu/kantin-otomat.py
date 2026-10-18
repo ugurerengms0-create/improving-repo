@@ -1,5 +1,5 @@
+import json
 from datetime import datetime
-
 
 menu =  {
     "Tost": 60.0,
@@ -9,16 +9,36 @@ menu =  {
     "Su": 10.0,
     "Simit": 20.0,
 }
-
 def display_menu():
     print("\n--- Kantin Otomasyonu Menü ---")
     for item, price in menu.items():
         print(f"{item}: {price} TL")
     print("-" * 40)
+    
+def kasa_guncelle(order, odenen_tutar):
+    dosya_adi = "kasa_gecmisi.json"
+    zaman = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    yeni_kayit = {
+        "tarih": zaman,
+        "siparis": order,
+        "odenen_tutar": odenen_tutar
+    }
+
+    try:
+        with open(dosya_adi, "r", encoding="utf-8") as f:
+            veri = json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        veri = []   
+    veri.append(yeni_kayit)
+    with open(dosya_adi, "w", encoding="utf-8") as f:
+        json.dump(veri, f, ensure_ascii=False, indent=4)
+    print("💾 Sipariş kasa geçmişine (kasa_gecmisi.json) başarıyla eklendi.")
+
 
 def fisi_yazdir(order, total, cut_price=None):
     zaman = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    
+
     with open("siparis_fisi.txt", "w", encoding="utf-8") as f:
         f.write("========================================\n")
         f.write("    İZMİR DEMOKRASİ ÜNİVERSİTESİ KANTİNİ\n")
@@ -59,18 +79,23 @@ def calculate_total(order):
 
     #İndirim uygulama
     if total >= 200.0:
-        cut_price = total * 0.85 #%15 indirim
+        odenen_tutar = total * 0.85  # %15 indirim
         print("🎉 200 TL ve üzeri alışverişe %15 İndirim Uygulandı!")
-        print(f"İndirimli Toplam: {cut_price:.2f} TL")
-        fisi_yazdir(order, total, cut_price)
+        print(f"İndirimli Toplam: {odenen_tutar:.2f} TL")
+        fisi_yazdir(order, total, odenen_tutar)
+        kasa_guncelle(order, odenen_tutar)
     elif total >= 100.0:
-        cut_price = total * 0.90 #%10 indirim
+        odenen_tutar = total * 0.90  # %10 indirim
         print("🎉 100 TL ve üzeri alışverişe %10 İndirim Uygulandı!")
-        print(f"İndirimli Toplam: {cut_price:.2f} TL")
-        fisi_yazdir(order, total, cut_price)
+        print(f"İndirimli Toplam: {odenen_tutar:.2f} TL")
+        fisi_yazdir(order, total, odenen_tutar)
+        kasa_guncelle(order, odenen_tutar)
     else:
-        print(f"Ödenecek Toplam: {total:.2f} TL (İndirim için en az 100 TL alışveriş yapmalısınız.)")
-        fisi_yazdir(order, total, cut_price)
+        odenen_tutar = total  # İndirim yoksa ödenen tutar ara toplama eşittir
+        print(f"Ödenecek Toplam: {odenen_tutar:.2f} TL (İndirim için en az 100 TL alışveriş yapmalısınız.)")
+        fisi_yazdir(order, total)
+        kasa_guncelle(order, odenen_tutar)
+        
     return total
 def main():
     order = {}
