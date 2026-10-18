@@ -1,0 +1,43 @@
+[
+    {
+        "tarih": "2026-10-18 17:19:30",
+        "siparis": {
+            "Kahve": 3,
+            "Tost": 2,
+            "Sandviç": 4
+        },
+        "odenen_tutar": 374.0
+    },
+    {
+        "tarih": "2026-10-18 17:35:42",
+        "siparisler": {
+            "Çay": 3,
+            "Su": 4,
+            "Simit": 5,
+            "Sandviç": 3,
+            "Tost": 7
+        },
+        "odenen_tutar": 641.75
+    },
+    {
+        "tarih": "2026-10-18 18:00:07",
+        "siparisler": {
+            "Simit": 3,
+            "Çay": 7,
+            "Sandviç": 9,
+            "Tost": 2,
+            "Su": 11,
+            "Kahve": 5
+        },
+        "odenen_tutar": 888.25
+    },
+    {
+        "tarih": "2026-10-18 18:24:12",
+        "siparisler": {
+            "Simit": 3,
+            "Çay": 5,
+            "Tost": 8
+        },
+        "odenen_tutar": 522.75
+    }
+]
